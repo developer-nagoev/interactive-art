@@ -1,0 +1,113 @@
+// =========== Mobile First ==============
+
+$screen-sm-min: 576px;
+$screen-md-min: 768px;
+$screen-lg-min: 992px;
+$screen-xl-min: 1200px;
+
+@mixin sm {
+	@media (min-width: #{$screen-sm-min}) {
+		@content;
+	}
+}
+
+@mixin md {
+	@media (min-width: #{$screen-md-min}) {
+		@content;
+	}
+}
+
+@mixin lg {
+	@media (min-width: #{$screen-lg-min}) {
+		@content;
+	}
+}
+
+@mixin xl {
+	@media (min-width: #{$screen-xl-min}) {
+		@content;
+	}
+}
+
+
+// =========== Supports Example ==============
+
+@mixin support {
+	@supports(display: grid) {
+		@content;
+	}
+}
+
+// =========== Typography Fluid ==============
+
+@function strip-unit($number) {
+	@if type-of($number)=='number'and not unitless($number) {
+		@return $number / ($number * 0 + 1);
+	}
+
+	@return $number;
+}
+
+@function calcFluidFontSize($f-min, $f-max, $w-min, $w-max: 1170px, $units: px) {
+	$f-min: strip-unit($f-min);
+	$f-max: strip-unit($f-max);
+	$w-min: strip-unit($w-min);
+	$w-max: strip-unit($w-max);
+
+	$k: ($f-max - $f-min)/($w-max - $w-min);
+	$b: $f-min - $k * $w-min;
+
+	$b: $b + $units;
+
+	@return calc(#{$k} * 100vw + #{$b});
+}
+
+@mixin fluidFontSize($f-min, $f-max, $w-min, $w-max, $fallback: false) {
+
+	font-size: $f-min;
+
+	@media (min-width: $w-min) {
+		@if ($fallback) {
+			font-size: $fallback;
+		}
+
+		font-size: calcFluidFontSize($f-min, $f-max, $w-min, $w-max, px);
+	}
+
+	@media (min-width: $w-max) {
+		font-size: $f-max;
+	}
+}
+
+
+// =========== Centered Element ==============
+
+@mixin centered {
+	position: absolute;
+	content: '';
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+@mixin centeredY {
+	position: absolute;
+	content: '';
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+@mixin centeredX {
+	position: absolute;
+	content: '';
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+// =========== Grid Layout ==============
+@mixin grid-layout($column, $row: 0px, $el-width) {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax($el-width, 1fr));
+	grid-column-gap: $column;
+	grid-row-gap: $row;
+}
